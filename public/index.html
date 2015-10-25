@@ -3,6 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>gulp demo</title>
+    <script>
+        require = function (name) {
+            console.log(name);
+
+            return {
+                createServer: function () {
+                    console.log("createServer", arguments);
+
+                    return {
+                        listen: function () {
+                            console.log("listen", arguments);
+                        }
+                    };
+                }
+            };
+        }
+    </script>
     <script src="../build/js/app.js"></script>
 </head>
 <body>
