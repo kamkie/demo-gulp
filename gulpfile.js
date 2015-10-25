@@ -3,7 +3,6 @@ var concat = require('gulp-concat');
 var typescript = require('gulp-tsc');
 var uglify = require('gulp-uglify');
 var imagemin = require('gulp-imagemin');
-var sourcemaps = require('gulp-sourcemaps');
 var run = require('gulp-run');
 var del = require('del');
 
@@ -13,28 +12,21 @@ var paths = {
 };
 
 gulp.task('clean', function (cb) {
-  // You can use multiple globbing patterns as you would with `gulp.src` 
-  del(['build'], cb);
+  del(['build', 'dist'], cb);
 });
 
-gulp.task('run', function () {
-  var node = new run.Command('node build/js/all.min.js');
+gulp.task('run', ['scripts'], function () {
+  var node = new run.Command('node build/js/app.js');
   node.exec();
 })
 
 gulp.task('scripts', [], function () {
-  // Minify and copy all JavaScript (except vendor scripts) 
-  // with sourcemaps all the way down 
   return gulp.src(paths.scripts)
-    .pipe(sourcemaps.init())
     .pipe(typescript({
       sourceMap: true,
       declaration: true,
       outDir: 'build/sourcemaps/'
     }))
-  // .pipe(uglify())
-  // .pipe(concat('all.min.js'))
-  // .pipe(sourcemaps.write())
     .pipe(gulp.dest('build/js'));
 });
 
@@ -44,6 +36,16 @@ gulp.task('images', [], function () {
   // Pass in options to the task 
     .pipe(imagemin({ optimizationLevel: 5 }))
     .pipe(gulp.dest('build/img'));
+});
+
+gulp.task('build', ['images'], function () {
+  // Minify and copy all JavaScript (except vendor scripts) 
+  // with sourcemaps all the way down 
+  return gulp.src(paths.scripts)
+    .pipe(typescript())
+    .pipe(uglify())
+    .pipe(concat('all.min.js'))
+    .pipe(gulp.dest('dist/js'));
 });
 
 gulp.task('watch', function () {
