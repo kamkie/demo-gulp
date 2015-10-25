@@ -4,6 +4,7 @@ var typescript = require('gulp-tsc');
 var uglify = require('gulp-uglify');
 var imagemin = require('gulp-imagemin');
 var run = require('gulp-run');
+var tsd = require('gulp-tsd');
 var del = require('del');
 
 var paths = {
@@ -12,12 +13,19 @@ var paths = {
 };
 
 gulp.task('clean', function (cb) {
-    del(['build', 'dist'], cb);
+    del(['build', 'dist', 'typings'], cb);
 });
 
-gulp.task('run', ['scripts'], function () {
+gulp.task('run', ['tsd', 'scripts'], function () {
     var node = new run.Command('node build/js/app.js');
     node.exec();
+});
+
+gulp.task('tsd', function (callback) {
+    tsd({
+        command: 'reinstall',
+        config: './tsd.json'
+    }, callback);
 });
 
 gulp.task('scripts', [], function () {
@@ -30,17 +38,15 @@ gulp.task('scripts', [], function () {
         .pipe(gulp.dest('build/js'));
 });
 
-// Copy all static images 
 gulp.task('images', [], function () {
+    // Copy all static images
     return gulp.src(paths.images)
-        // Pass in options to the task
         .pipe(imagemin({optimizationLevel: 5}))
         .pipe(gulp.dest('build/img'));
 });
 
-gulp.task('build', ['images'], function () {
+gulp.task('build', ['tsd', 'images'], function () {
     // Minify and copy all JavaScript (except vendor scripts)
-    // with sourcemaps all the way down
     return gulp.src(paths.scripts)
         .pipe(typescript())
         .pipe(uglify())
