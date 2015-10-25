@@ -14,7 +14,8 @@
     "gulp-uglify": "^1.4.2"
   },
   "scripts": {
-    "test": "glup test"
+    "run": "gulp clean build && node dist/js/all.min.js",
+    "test": "gulp clean default && node build/js/app.js"
   },
   "author": "",
   "license": "ISC"
