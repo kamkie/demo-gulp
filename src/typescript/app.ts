@@ -2,10 +2,11 @@
 "use strict";
 
 import http = require('http');
-http.createServer(function (req, res) {
+var server = http.createServer(function (req, res) {
     res.writeHead(200, {'Content-Type': 'text/plain'});
     res.end('Hello World\n');
-}).listen(8080, '127.0.0.1');
+});
+server.listen(8080, '127.0.0.1');
 console.log('Server running at http://127.0.0.1:8080/');
 
 console.log("--- start ---");
@@ -32,4 +33,8 @@ var hello = new Startup('world');
 hello.hello();
 Startup.main();
 
-console.log("--- stop ---");
+
+server.close(() => {
+    console.log("--- stop ---");
+    process.exit()
+});
