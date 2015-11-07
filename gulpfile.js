@@ -28,7 +28,7 @@ gulp.task('tsd', function (callback) {
     }, callback);
 });
 
-gulp.task('scripts', [], function () {
+gulp.task('scripts', ['tsd'], function () {
     return gulp.src(paths.scripts)
         .pipe(typescript({
             sourceMap: true,
