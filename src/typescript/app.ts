@@ -1,4 +1,5 @@
 ///<reference path='../../typings/tsd.d.ts' />
+"use strict";
 
 import http = require('http');
 http.createServer(function (req, res) {
